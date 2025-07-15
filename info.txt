@@ -1,0 +1,70 @@
+ERROR: (gcloud.builds.submit) PERMISSION_DENIED: The caller does not have permission. This command is authenticated as al3xanderdani3lrios@gmail.com which is the active account specified by the [core/account] property
+
+
+ChatGPT Plus
+Thanks for sharing the error!
+
+This PERMISSION_DENIED error means your current Google Cloud account (al3xanderdani3lrios@gmail.com) does not have permissions to run builds or push Docker images via gcloud builds submit.
+
+✅ Here's how to fix it step by step:
+🔍 Step 1: Make sure you’ve selected the right project
+Check which project is currently active:
+
+bash
+Copiar
+Editar
+gcloud config get-value project
+If it's not the correct one, set it:
+
+bash
+Copiar
+Editar
+gcloud config set project YOUR_PROJECT_ID
+Replace YOUR_PROJECT_ID with the one you used in Terraform (e.g., ml-project-12345).
+
+🔐 Step 2: Give your account Cloud Build permissions
+You need to add the Cloud Build Editor role to your account in that project:
+
+Go to: https://console.cloud.google.com/iam-admin/iam
+
+Find your email al3xanderdani3lrios@gmail.com
+
+Click the pencil icon ✏️ to edit
+
+Click “Add Another Role”
+
+Add the role:
+
+Cloud Build Editor (roles/cloudbuild.builds.editor)
+
+(Optionally also Storage Admin if pushing to Container Registry)
+
+✅ These roles are free and safe for student projects.
+
+📦 Step 3: Enable required APIs (once per project)
+Run:
+
+bash
+Copiar
+Editar
+gcloud services enable cloudbuild.googleapis.com
+gcloud services enable containerregistry.googleapis.com
+If you’re using Artifact Registry instead of Container Registry, also run:
+
+bash
+Copiar
+Editar
+gcloud services enable artifactregistry.googleapis.com
+🔁 Step 4: Re-authenticate (if needed)
+If you just added yourself or changed roles, you may need to log out and back in:
+
+bash
+Copiar
+Editar
+gcloud auth login
+Then retry:
+
+bash
+Copiar
+Editar
+gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/ml-train
