@@ -11,4 +11,5 @@ httpx
 mlflow==2.22.1
 uvicorn
 pydantic==1.10.22
+pytest
 google-cloud-storage
