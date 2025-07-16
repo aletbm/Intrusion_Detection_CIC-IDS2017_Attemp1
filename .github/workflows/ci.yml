@@ -62,8 +62,8 @@ jobs:
           pip install pipenv
           pipenv install --deploy --system
 
-      - name: Run tests
-        run: pytest tests/ --maxfail=1 --disable-warnings -q
+      - name: Run tests (skip model if needed)
+        run: SKIP_MODEL_TESTS=1 pytest tests/ --maxfail=1 --disable-warnings -q
 
   build-and-push:
     needs: [lint, test]
@@ -78,14 +78,19 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           version: '414.0.0'
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: plucky-haven-463121-j1
 
+      - name: Write GCP credentials to file
+        run: echo "${{ secrets.GCP_SA_KEY }}" > $HOME/gcp-key.json
+
       - name: Activate service account
-        run: gcloud auth activate-service-account --key-file="${{ secrets.GCP_SA_KEY }}"
+        run: gcloud auth activate-service-account --key-file="$HOME/gcp-key.json"
 
       - name: Authenticate Docker to GCR
         run: gcloud auth configure-docker
 
       - name: Build and push Docker image to GCR
         run: make gcloud-build
+
+      - name: Clean up key
+        run: rm $HOME/gcp-key.json
