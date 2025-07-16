@@ -1,5 +1,7 @@
 # Intrusion Detection (CIC-IDS2017) - Attemp1
 
+![hacker](./src/1010066.jpg)
+
 ## Problem Description
 
 This project focuses on building a machine learning system for **multi-class network intrusion detection**, based on the **CIC-IDS2017 dataset**. The goal is to develop a reliable and scalable classifier capable of identifying different types of malicious network traffic alongside normal (benign) activity.
