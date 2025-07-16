@@ -301,6 +301,8 @@ This executes the unit and integration tests found in the `tests/` folder, inclu
 
 ### 🔁 8. CI/CD Integration
 
+![cicd](./src/cicd.png)
+
 The project includes a GitHub Actions workflow defined in `.github/workflows/ci.yml`, which runs tests and linting on each push or pull request.
 
 You can extend this pipeline to include Docker build and deployment, test execution on GCP, and Slack notifications using your environment variables.
