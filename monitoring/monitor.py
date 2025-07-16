@@ -14,18 +14,21 @@ import os
 import requests
 import sys
 import json
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from pipelines.training_flow import intrusion_pipeline
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # --- Configuration ---
 MLFLOW_TRACKING_URI = "http://localhost:5000"
 MODEL_NAME = "MyXGBClassifier"
 MODEL_STAGE = "Staging"
 ARTIFACT_DIR = "monitoring/artifacts"
-DRIFT_THRESHOLD = -1
-SLACK_WEBHOOK_URL = (
-    "https://hooks.slack.com/services/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"
-)
+DRIFT_THRESHOLD = 0.3
+SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 os.makedirs(ARTIFACT_DIR, exist_ok=True)
@@ -124,20 +127,15 @@ def send_slack_alert(message: str):
         print(f"Failed to send Slack alert: {response.status_code} {response.text}")
 
 
-@flow(name="Retrain Model Flow")
-def retrain_flow():
-    print("Starting model retraining...")
-    intrusion_pipeline()
-    print("Retraining completed.")
-
-
 @task
 def check_drift_and_maybe_retrain(drift_score: float):
     if drift_score > DRIFT_THRESHOLD:
         alert_msg = f"ALERT: Drift detected (score={drift_score:.3f}) > threshold ({DRIFT_THRESHOLD})"
         print(alert_msg)
         send_slack_alert(alert_msg)
-        retrain_flow.submit()  # Async retraining
+        print("Starting model retraining...")
+        intrusion_pipeline()
+        print("Retraining completed.")
         return True
     else:
         print(f"Drift is acceptable ({drift_score:.3f} ≤ {DRIFT_THRESHOLD})")

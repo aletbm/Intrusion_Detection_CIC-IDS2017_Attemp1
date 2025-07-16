@@ -19,6 +19,12 @@ lint:
 run-monitoring:
 	python monitoring/monitor.py
 
+build-image:
+	docker build -t intrusion-api .
+
+gcloud-build:
+	gcloud builds submit --tag $(IMAGE_NAME):$(TAG) .
+
 run-api:
 	docker build -t intrusion-api .
 	docker run --rm -p 8080:8080 intrusion-api
@@ -32,6 +38,9 @@ run-mlflow:
 run-training:
 	python pipelines/training_flow.py
 
+run-inference:
+	python pipelines/batch_inference.py  data/test.parquet
+
 terraform-deploy:
 	terraform -chdir=infra init
 	terraform -chdir=infra plan
@@ -39,3 +48,7 @@ terraform-deploy:
 
 terraform-destroy:
 	terraform -chdir=infra destroy -auto-approve
+
+test-remote:
+	python deployment/test_serve.py
+

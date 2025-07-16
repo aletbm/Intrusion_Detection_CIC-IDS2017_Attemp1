@@ -15,6 +15,8 @@ import mlflow
 from mlflow.tracking import MlflowClient
 from prefect import flow, task
 import os
+from google.cloud import storage
+
 
 seed = 42
 input_folder = "./"
@@ -150,6 +152,20 @@ def training(X_train, y_train, X_val, y_val, X_test, y_test):
     return xgb_clf
 
 
+@task
+def upload_model_artifacts_to_gcs(project_id, bucket_name, local_dir, prefix = ""):
+    client = storage.Client(project=project_id)
+    bucket = client.bucket(bucket_name)
+
+    for root, _, files in os.walk(local_dir):
+        for file in files:
+            local_path = os.path.join(root, file)
+            blob_path = os.path.join(prefix, os.path.relpath(local_path, local_dir)).replace("\\", "/")
+            blob = bucket.blob(blob_path)
+            blob.upload_from_filename(local_path)
+            print(f"Uploaded {local_path} to gs://{bucket_name}/{blob_path}")
+
+
 @flow(name="Intrusion ML Pipeline", retries=1, retry_delay_seconds=300)
 def intrusion_pipeline():
     train, val, test = load_data()
@@ -162,6 +178,12 @@ def intrusion_pipeline():
         y_test,
     ) = prepare_data(train, val, test)
     training(X_train, y_train, X_val, y_val, X_test, y_test)
+    upload_model_artifacts_to_gcs(
+        project_id="plucky-haven-463121-j1",
+        bucket_name="plucky-haven-463121-j1-mlflow-models",
+        local_dir="models",
+        prefix="run_artifacts"
+    )
     return
 
 

@@ -26,6 +26,11 @@ class InputData(BaseModel):
     features: list
 
 
+@app.get("/")
+def read_root():
+    return {"message": "API succesfully working"}
+
+
 @app.post("/predict")
 def predict(data: InputData):
     array = np.array(data.features).reshape(1, -1)

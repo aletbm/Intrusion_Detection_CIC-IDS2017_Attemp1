@@ -56,9 +56,9 @@ def test_label_encoding():
     y_val = le.transform(y_val)
     y_test = le.transform(y_test)
 
-    assert np.unique(y_train) == np.unique(act_y_train)
-    assert np.unique(y_val) == np.unique(act_y_val)
-    assert np.unique(y_test) == np.unique(act_y_test)
+    assert np.array_equal(np.unique(y_train), np.unique(act_y_train))
+    assert np.array_equal(np.unique(y_val), np.unique(act_y_val))
+    assert np.array_equal(np.unique(y_test), np.unique(act_y_test))
 
     assert len(y_train) == len(act_y_train)
     assert len(y_val) == len(act_y_val)
