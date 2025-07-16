@@ -81,6 +81,9 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: plucky-haven-463121-j1
 
+      - name: Activate service account
+        run: gcloud auth activate-service-account --key-file="${{ secrets.GCP_SA_KEY }}"
+
       - name: Authenticate Docker to GCR
         run: gcloud auth configure-docker
 
