@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import numpy as np
 import cloudpickle
 
-RUN_ID = "14443851117c4ad2a1e39a3182b4c10e"
+RUN_ID = "cd1a86fb023f4ffaa6593da292ced52c"
 artifacts_path = f"./models/1/{RUN_ID}/artifacts/"
 
 model_path = f"{artifacts_path}/xgboost_model/model.pkl"
