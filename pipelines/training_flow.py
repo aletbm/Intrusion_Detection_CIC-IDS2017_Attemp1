@@ -153,14 +153,16 @@ def training(X_train, y_train, X_val, y_val, X_test, y_test):
 
 
 @task
-def upload_model_artifacts_to_gcs(project_id, bucket_name, local_dir, prefix = ""):
+def upload_model_artifacts_to_gcs(project_id, bucket_name, local_dir, prefix=""):
     client = storage.Client(project=project_id)
     bucket = client.bucket(bucket_name)
 
     for root, _, files in os.walk(local_dir):
         for file in files:
             local_path = os.path.join(root, file)
-            blob_path = os.path.join(prefix, os.path.relpath(local_path, local_dir)).replace("\\", "/")
+            blob_path = os.path.join(
+                prefix, os.path.relpath(local_path, local_dir)
+            ).replace("\\", "/")
             blob = bucket.blob(blob_path)
             blob.upload_from_filename(local_path)
             print(f"Uploaded {local_path} to gs://{bucket_name}/{blob_path}")
@@ -182,7 +184,7 @@ def intrusion_pipeline():
         project_id="plucky-haven-463121-j1",
         bucket_name="plucky-haven-463121-j1-mlflow-models",
         local_dir="models",
-        prefix="run_artifacts"
+        prefix="run_artifacts",
     )
     return
 

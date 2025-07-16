@@ -15,12 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: '3.10'
+
       - name: Install pipenv
         run: pip install pipenv
+
       - name: Install dependencies
         run: pipenv install --deploy --system
 
@@ -29,16 +32,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
-      - name: Install dependencies
+          python-version: '3.10'
+
+      - name: Install pipenv and pre-commit
         run: |
-          pip install pipenv
+          pip install pipenv pre-commit
           pipenv install --deploy --system
-          pip install pre-commit
-      - name: Run pre-commit hooks
+
+      - name: Run linting checks
         run: pre-commit run --all-files
 
   test:
@@ -46,14 +51,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
-      - name: Install dependencies
+          python-version: '3.10'
+
+      - name: Install pipenv and dependencies
         run: |
           pip install pipenv
           pipenv install --deploy --system
+
       - name: Run tests
         run: pytest tests/ --maxfail=1 --disable-warnings -q
 
@@ -65,11 +73,16 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
           version: '414.0.0'
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: plucky-haven-463121-j1
+
+      - name: Authenticate Docker to GCR
+        run: gcloud auth configure-docker
+
       - name: Build and push Docker image to GCR
         run: make gcloud-build

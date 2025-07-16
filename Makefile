@@ -51,4 +51,3 @@ terraform-destroy:
 
 test-remote:
 	python deployment/test_serve.py
-
