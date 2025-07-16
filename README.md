@@ -274,6 +274,7 @@ In addition to the local report, if the data drift exceeds a predefined threshol
 Furthermore, when drift is detected, the monitoring logic **automatically triggers the training pipeline**, launching a new retraining process to adapt the model to current data conditions. This behavior closes the loop between monitoring and adaptation, helping maintain high predictive performance over time.
 
 To enable Slack notifications, make sure to configure your `.env` file with a valid `SLACK_WEBHOOK_URL`.
+
 ---
 
 ### ✅ 7. Testing and Code Quality
