@@ -81,7 +81,10 @@ jobs:
           project_id: plucky-haven-463121-j1
 
       - name: Write GCP credentials to file
-        run: echo "${{ secrets.GCP_SA_KEY }}" > $HOME/gcp-key.json
+        run: |
+          cat > $HOME/gcp-key.json <<EOF
+          ${{ secrets.GCP_SA_KEY }}
+          EOF
 
       - name: Activate service account
         run: gcloud auth activate-service-account --key-file="$HOME/gcp-key.json"
@@ -92,5 +95,5 @@ jobs:
       - name: Build and push Docker image to GCR
         run: make gcloud-build
 
-      - name: Clean up key
+      - name: Clean up credentials
         run: rm $HOME/gcp-key.json
