@@ -1,4 +1,4 @@
-# Intrusion Detection (CIC-IDS2017) - Attemp1
+# Intrusion Detection (CIC-IDS2017) - Attempt1
 
 ![hacker](./src/1010066.jpg)
 
