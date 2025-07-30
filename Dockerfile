@@ -10,7 +10,7 @@ COPY ["Pipfile", "Pipfile.lock", "./"]
 
 RUN pipenv install --system --deploy
 
-COPY src ./api
+COPY deployment ./api
 COPY models ./models
 
 EXPOSE 8080
