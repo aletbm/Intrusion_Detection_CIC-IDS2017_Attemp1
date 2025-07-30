@@ -51,3 +51,19 @@ terraform-destroy:
 
 test-remote:
 	python deployment/test_serve.py
+
+
+GCP_PROJECT_ID = plucky-haven-463121-j1
+SERVICE_NAME = intrusion-detection-api
+REGION = us-east1
+IMAGE = gcr.io/$(GCP_PROJECT_ID)/$(SERVICE_NAME)
+PORT = 8080
+
+deploy:
+	gcloud builds submit --tag $(IMAGE)
+	gcloud run deploy $(SERVICE_NAME) \
+		--image $(IMAGE) \
+		--platform managed \
+		--region $(REGION) \
+		--allow-unauthenticated \
+		--port $(PORT)
